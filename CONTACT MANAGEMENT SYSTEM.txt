@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+struct dictionari {
+  char name[100];
+ long long  phone_no;
+  char email[100];
+  char address[100];
+};
+
+int size = 0;
+struct dictionari *dict = NULL;  // Pointer to dynamically allocated array
+
+int check( long long int phone_no) {
+  for (int j = 0; j < size; j++) {
+    if (dict[j].phone_no == phone_no) {
+      return j;
+    }
+  }
+  return -1;
+}
+
+void reallocate_memory() {
+  struct dictionari *temp = realloc(dict, (size + 1) * sizeof(struct dictionari));
+  if (temp == NULL) {
+    printf("Memory allocation failed!\n");  // Use printf for error message
+    exit(1);
+  }
+  dict = temp;
+}
+
+void insert(char name[],  long long int phone_no, char email[], char address[]) {
+  int index = check(phone_no);
+  if (index == -1) {
+    reallocate_memory();
+    strcpy(dict[size].name, name);
+    strcpy(dict[size].email, email);
+    strcpy(dict[size].address, address);
+    dict[size].phone_no = phone_no;
+    size++;
+  } else {
+    strcpy(dict[index].name, name);
+    strcpy(dict[index].email, email);
+    strcpy(dict[index].address, address);
+  }
+}
+void display() {
+  for (int o = 0; o < size; o++) {
+    printf("%s %ld %s %s\n", dict[o].name, dict[o].phone_no, dict[o].email, dict[o].address);
+  }
+}
+
+void delet(long long int  number) {
+  int index = check(number);
+  char d[100];
+
+  if (index != -1) {
+    strcpy(d, dict[index].name);
+    for (int k = index; k < size - 1; k++) {
+      dict[k] = dict[k + 1];
+    }
+    size--;
+    printf("Entry with name %s deleted successfully.\n", d);
+  } else {
+    printf("CONTACT NOT FOUND::");
+  }
+}
+int main() 
+{
+    long long phone_no;
+    char email[100];
+    char address[100];
+    char name[100];
+    
+ int choice;
+ while(1)
+ {
+     printf("enter choice");
+     scanf("%d",&choice);
+     switch(choice)
+     {
+         case 1:
+          printf("Enter name and value: ");
+        scanf("%s %ld", name, &phone_no);
+        printf("Enter email and address: ");
+        scanf("%s %s", email, address);
+
+        insert(name, phone_no, email, address);
+        break;
+        case 2:
+        display();
+        break;
+        case 3:
+        int number;
+        printf("enter the contact number to delete");
+        scanf("%d",&number);
+        delet(number);
+     }
+     if(choice==0)
+     break;
+}
+}
